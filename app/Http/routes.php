@@ -13,4 +13,14 @@
 
 Route::get('/catchme', 'CampaignController@index');
 
+Route::get('/catchme/user/existence', 'CampaignController@userExistence');
+
+Route::get('/catchme/clear_session', 'CampaignController@clearSession');
+
 Route::post('/catchme', 'CampaignController@createParticipant');
+
+Route::post('catchme/user/register', 'CampaignController@registerUser');
+
+Route::post('/catchme/user/isRegistered', 'CampaignController@checkUserRegistrationStatus');
+
+Route::post('/catchme/user/isUploaded', 'CampaignController@checkUserUploadingPhotoStatus');

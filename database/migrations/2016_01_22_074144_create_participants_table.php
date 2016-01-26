@@ -23,6 +23,7 @@ class CreateParticipantsTable extends Migration
             $table->integer('question_id')->unsigned();
             $table->string('answer')->nullable();
             $table->string('photo')->nullable();
+            $table->boolean('isRegistered')->default(false);
             $table->boolean('isInstantWinner')->default(false);
             $table->boolean('isWeekWinner')->default(false);
             $table->timestamps();

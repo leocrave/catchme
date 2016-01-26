@@ -16,4 +16,8 @@ elixir(function(mix) {
     	'vendor/vue.min.js',
     	'vendor/vue-resource.min.js'
     ], 'public/js/vendor.js');
+
+    mix.styles([
+    	'bootstrap.min.css'
+    ], 'public/css/app.css');
 });

@@ -4,58 +4,69 @@
   <meta charset="UTF-8">
   <meta id="token" name="token" value="{{ csrf_token() }}">
 	<title>Total - Catch Me If You Can</title>
-	<script type="text/javascript" src=""></script>
-	<!-- Latest compiled and minified JavaScript -->
-	<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="css/app.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 
 <body>
-  <div id="app" class="container">
-    <div>
-      {{ message }}  
-    </div>
-    <div class="form-group">
-      <button id="fbLogin" v-on:click="insertParticipantSocialInfo">
-        {{ fbLogin }}
-      </button>  
-    </div>
-    
-    <div class="form-group">
-      <button id="register" v-on:click="showRegister = true">
-        {{ registerMsg }}
-      </button>
-    </div>
-
-    <div v-if="showRegister">
-      Register form
-      <form>
-        <div class="form-group">
-          <label for="icno">IC Number</label>
-          <input placeholder="Please enter your ic number" v-model="icno">
+  <div class="container">
+    <div id="app">
+      <div class="button-group">
+        <div>
+          {{ message }}  
+        </div>
+        <div class="form-group" v-if="registration.showSocialButton">
+          <button class="btn btn-primary" id="fbLogin" v-on:click="insertParticipantSocialInfo">
+            Facebook Log In
+          </button>  
+        </div>  
+        <div class="form-group" v-if="registration.showRegisterButton" v-on:click="registration.showRegistrationForm = true">
+          <button class="btn btn-primary" id="register">
+            Register here
+          </button>
         </div>
 
-        <div class="form-group">
-          <label for="mobile">Mobile Phone Number</label>
-          <input placeholder="Your mobile number" v-model="mobile">
+        <div v-if="registration.showSocialButton" class="form-group">
+          <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
+          </fb:login-button>
         </div>
+      </div>
+      <div v-if="registration.showRegistrationForm">
+        <h3>Registration form</h3>
+        <form v-on:submit="registerUser()">
+          <div class="form-group">
+            <label for="icno">IC Number</label>
+            <input class="form-control" placeholder="Please enter your ic number" v-model="icno">
+          </div>
 
-        <div class="form-group">
-          <label for="uploadPhoto">Upload Photo</label>
-          <input type="file">
-        </div>
+          <div class="form-group">
+            <label for="mobile">Mobile Phone Number</label>
+            <input class="form-control" placeholder="Your mobile number" v-model="mobile">
+          </div>
 
-        <button type="submit">Register</button>
-      </form>
+          <div class="form-group">
+            <label for="uploadPhoto">Upload Photo</label>
+            <input type="file" accept="image/*" v-on:change="previewFile()">
+          </div>
+
+          <div class="form-group">
+            <img src="">
+          </div>
+
+          <div class="form-group">
+            <button class="btn btn-primary" type="submit">Register</button>  
+          </div>
+        </form>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn-secondary" v-on:click="clearSession()">
+          Clear Session(Testing Purpose)
+        </button>
+      </div>
     </div>
-
-
-
-<!--     <button id="alert" v-on:click="checkInstagramLogin">
-      {{ igLogin }}
-    </button> -->
   </div>
-
+    
   <script src="js/vendor.js"></script>
 	<script src="js/app.js"></script>
   <script>
@@ -146,8 +157,7 @@
   the FB.login() function when clicked.
 -->
 
-<fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
-</fb:login-button>
+
 
 <div id="status">
 </div>
