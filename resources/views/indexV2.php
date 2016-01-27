@@ -14,8 +14,8 @@
       <login-register-modal :show.sync="showLoginRegisterModal">
       </login-register-modal>
 
-      <login-register-modal :show.sync="showRegisterModal">
-      </login-register-modal>
+      <register-modal :show.sync="showRegisterModal">
+      </register-modal>
     </div>
   </div>
 
@@ -54,7 +54,7 @@
                 Login
               </button>
               <button class="modal-default-button" v-on:click="registerUser()">
-                Register
+                New User
               </button>
               <button class="modal-default-button" v-on:click="show = false">
                 Cancel
@@ -76,10 +76,13 @@
               Register
             </slot>
           </div>
-          
           <div class="modal-body">
             <slot name="body">
               <div class="container">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" placeholder="Enter your user name" v-model="username">
+                </div>
                 <div class="form-group">
                   <label for="email">Email</label>
                   <input type="email" placeholder="Enter your email address" v-model="email">
@@ -88,17 +91,24 @@
                   <label for="password">Password</label>
                   <input type="password" placeholder="Enter your password" v-model="password">
                 </div>
+                <div class="form-group">
+                  <label for="confirmPassword">Confirm Password</label>
+                  <input type="password" placeholder="Re-enter your password" v-model="confirmPassword">
+                </div>
+                <div class="form-group">
+                  <label for="icno">Identification Number</label>
+                  <input type="text" placeholder="Enter your Identification number" v-model="icno">
+                </div>
+                <div class="form-group">
+                  <label for="mobile">Mobile Number</label>
+                  <input type="phone" placeholder="Enter your mobile number" v-model="mobile">
+                </div>
               </div>
             </slot>
           </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
-              </fb:login-button>
-              <button class="modal-default-button" v-on:click="loginUser()">
-                Login
-              </button>
               <button class="modal-default-button" v-on:click="registerUser()">
                 Register
               </button>
