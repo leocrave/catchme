@@ -11,64 +11,109 @@
 <body>
   <div class="container">
     <div id="app">
-      <div class="button-group">
-        <div>
-          {{ message }}
-        </div>
-        <div class="form-group" v-if="registration.showSocialButton">
-          <button class="btn btn-primary" id="fbLogin" v-on:click="insertParticipantSocialInfo">
-            Facebook Log In
-          </button>  
-        </div>  
-        <div class="form-group" v-if="registration.showRegisterButton" v-on:click="registration.showRegistrationForm = true">
-          <button class="btn btn-primary" id="register">
-            Register here
-          </button>
-        </div>
+      <login-register-modal :show.sync="showLoginRegisterModal">
+      </login-register-modal>
 
-        <div v-if="registration.showSocialButton" class="form-group">
-          <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
-          </fb:login-button>
-        </div>
-      </div>
-      <div v-if="registration.showRegistrationForm">
-        <h3>Registration form</h3>
-        <form v-on:submit="registerUser()">
-          <div class="form-group">
-            <label for="icno">IC Number</label>
-            <input class="form-control" placeholder="Please enter your ic number" v-model="icno">
-          </div>
-
-          <div class="form-group">
-            <label for="mobile">Mobile Phone Number</label>
-            <input class="form-control" placeholder="Your mobile number" v-model="mobile">
-          </div>
-
-          <div class="form-group">
-            <label for="uploadPhoto">Upload Photo</label>
-            <input type="file" accept="image/*">
-          </div>
-
-          <div class="form-group">
-            <img src="">
-          </div>
-
-          <div class="form-group">
-            <button class="btn btn-primary" type="submit">Register</button>  
-          </div>
-        </form>
-      </div>
-
-      <div class="form-group">
-        <button class="btn btn-secondary" v-on:click="clearSession()">
-          Clear Session(Testing Purpose)
-        </button>
-      </div>
+      <login-register-modal :show.sync="showRegisterModal">
+      </login-register-modal>
     </div>
   </div>
+
+  <!-- scripts for modal page -->
+  <script type="x/template" id="login-register-modal-template">
+    <div class="modal-mask" v-show="show" transition="modal">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+
+          <div class="modal-header">
+            <slot name="header">
+              Login / Register
+            </slot>
+          </div>
+          
+          <div class="modal-body">
+            <slot name="body">
+              <div class="container">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" placeholder="Enter your email address" v-model="email">
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" placeholder="Enter your password" v-model="password">
+                </div>
+              </div>
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
+              </fb:login-button>
+              <button class="modal-default-button" v-on:click="loginUser()">
+                Login
+              </button>
+              <button class="modal-default-button" v-on:click="registerUser()">
+                Register
+              </button>
+              <button class="modal-default-button" v-on:click="show = false">
+                Cancel
+              </button>
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="x/template" id="register-modal-template">
+    <div class="modal-mask" v-show="show" transition="modal">
+      <div class="modal-wrapper">
+        <div class="modal-container">
+
+          <div class="modal-header">
+            <slot name="header">
+              Register
+            </slot>
+          </div>
+          
+          <div class="modal-body">
+            <slot name="body">
+              <div class="container">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" placeholder="Enter your email address" v-model="email">
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" placeholder="Enter your password" v-model="password">
+                </div>
+              </div>
+            </slot>
+          </div>
+
+          <div class="modal-footer">
+            <slot name="footer">
+              <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
+              </fb:login-button>
+              <button class="modal-default-button" v-on:click="loginUser()">
+                Login
+              </button>
+              <button class="modal-default-button" v-on:click="registerUser()">
+                Register
+              </button>
+              <button class="modal-default-button" v-on:click="show = false">
+                Cancel
+              </button>
+            </slot>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
     
   <script src="js/vendor.js"></script>
-	<script src="js/app.js"></script>
+	<script src="js/appV2.js"></script>
   <script>
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {

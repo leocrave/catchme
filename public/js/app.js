@@ -89,20 +89,23 @@ new Vue({
 			var data = {
 				'social_id': 'h323bf2r2448yvf3',
 				'icno': this.icno, 
-				'mobile': this.mobile,
-				'photo': this.imageFile.files
+				'mobile': this.mobile
 			}
 
-			this.$http.post('http://localhost/totalmy/public/catchme/user/register', data).then(function(response) {
+      var images = document.querySelector('input[type=file]').files[0];
+
+      var formData = new FormData();
+      formData.append('social_id', 'h323bf2r2448yvf3');
+      formData.append('icno', this.icno);
+      formData.append('mobile', this.mobile);
+      formData.append('photo', images);
+
+			this.$http.post('http://localhost/totalmy/public/catchme/user/register', formData).then(function(response) {
 				this.registration.showRegisterButton = false;
 				this.registration.showRegistrationForm = false;
 			}, function(response) {
 				console.log('Invalid url...');
 			});
-		},
-		previewFile: function() {
-      var preview = document.querySelector('img');
-      this.imageFile = document.querySelector('input[type=file]').files[0];
-    }
+		}
 	}
 })

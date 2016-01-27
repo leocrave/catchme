@@ -14,21 +14,17 @@ class CreateParticipantsTable extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('social_id');
             $table->string('username');
+            $table->string('password')->nullable();
+            $table->string('social_id')->nullable();
             $table->string('email')->nullable();
-            $table->string('ic')->nullable();
+            $table->string('icno')->nullable();
             $table->string('mobile')->nullable();
-            $table->integer('participateWeek')->nullable();
-            $table->integer('question_id')->unsigned();
-            $table->string('answer')->nullable();
-            $table->string('photo')->nullable();
             $table->boolean('isRegistered')->default(false);
+            $table->boolean('isFirstTimeUser')->default(false);
             $table->boolean('isInstantWinner')->default(false);
-            $table->boolean('isWeekWinner')->default(false);
+            $table->boolean('isGrandWinner')->default(false);
             $table->timestamps();
-
-            $table->foreign('question_id')->references('id')->on('questions');
         });
     }
 

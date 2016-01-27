@@ -15,7 +15,60 @@ use Input;
 
 class CampaignController extends Controller
 {
-    public function index() {
+
+    public function indexV2() {
+        return view('indexV2');
+    }
+
+
+    public function checkUserRegStatus() {
+        $email = Session::get('email');
+
+        if ($email == null) {
+            /*if session existed*/
+            return response()->json([
+                'message' => 'Session does not exist', 
+                'sessionExist' => false
+            ]);
+        } else {
+            /*if session not existed*/
+            $count = Participant::where('email', $email)
+                ->where('isRegistered', true)
+                ->count();
+
+            if ($count == 0) {
+                /*If user not registered*/
+                return response()->json([
+                    'message' => 'Participant not registered yet', 
+                    'sessionExist' => true,
+                    'isRegistered' => false
+                ]);
+            } else {
+                /*If user registered*/
+                $count = Participant::where('email', $email)
+                    ->where('isRegistered', true)
+                    ->where('isFirstTimeUser', true)
+                    ->count();
+                if ($count) {
+                    /*If user is first time user*/
+                    return response()->json([
+                        'message' => 'Participant is first time user',
+                        'sessionExist' => true,
+                        'isRegistered' => true,
+                        'isFirstTimeUser' => true]);
+                } else {
+                    /*If user is not first time user*/
+                    return response()->json([
+                        'message' => 'Participant is existing user',
+                        'sessionExist' => true,
+                        'isRegistered' => true,
+                        'isFirstTimeUser' => false]);
+                }
+            }
+        }
+    }
+
+    /*public function index() {
         $username = Session::get('social_id');
 
         if ($username != null) {
@@ -65,6 +118,7 @@ class CampaignController extends Controller
     }
 
     public function registerUser(Request $request) {
+        var_dump($request);
         $social_id = $request->social_id;
         $icno = $request->icno;
         $mobile = $request->mobile;
@@ -117,5 +171,7 @@ class CampaignController extends Controller
         Session::flush();
 
         return response()->json(['message' => 'Session flush']);
-    }
+    }*/
+
+
 }
