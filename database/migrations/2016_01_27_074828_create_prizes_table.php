@@ -15,7 +15,8 @@ class CreatePrizesTable extends Migration {
 		Schema::create('prizes', function(Blueprint $table)
 		{
 			$table->increments('id');
-			$table->integer('week');
+			$table->string('type');
+			$table->integer('week')->nullable();
 			$table->string('item');
 			$table->string('price');
 			$table->timestamps();

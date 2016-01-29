@@ -11,10 +11,11 @@
 <body>
   <div class="container">
     <div id="app">
-      <login-register-modal :show.sync="showLoginRegisterModal">
+      <button v-on:click="clearSession()">Clear Session(Development Used Only)</button>
+      <login-register-modal :show.sync="modal.showLoginRegisterModal">
       </login-register-modal>
 
-      <register-modal :show.sync="showRegisterModal">
+      <register-modal :show.sync="modal.showRegisterModal">
       </register-modal>
     </div>
   </div>
@@ -48,12 +49,10 @@
 
           <div class="modal-footer">
             <slot name="footer">
-              <fb:login-button scope="public_profile,email," onlogin="checkLoginState();">
-              </fb:login-button>
               <button class="modal-default-button" v-on:click="loginUser()">
                 Login
               </button>
-              <button class="modal-default-button" v-on:click="registerUser()">
+              <button class="modal-default-button" v-on:click="showRegisterUserModal()">
                 New User
               </button>
               <button class="modal-default-button" v-on:click="show = false">

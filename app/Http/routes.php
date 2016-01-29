@@ -27,4 +27,12 @@ Route::post('/catchme/user/isUploaded', 'CampaignController@checkUserUploadingPh
 
 Route::get('/catchme', 'CampaignController@indexV2');
 
-Route::get('/catchme/user_reg_status', 'CampaignController@checkUserRegStatus');
+Route::get('/catchme/clearSession', 'CampaignController@clearSession');
+
+Route::get('/catchme/random_instant_reward', 'CampaignController@randomInstantReward');
+
+Route::post('/catchme/user/login', 'CampaignController@login');
+
+Route::post('/catchme/user/register', 'CampaignController@register');
+
+Route::get('/catchme/user/reg_status', 'CampaignController@checkUserRegStatus');

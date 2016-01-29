@@ -1,5 +1,6 @@
 Vue.http.headers.common['X-CSRF-TOKEN'] = document.querySelector('#token').getAttribute('value');
 
+/*Login or register modal component*/
 Vue.component('login-register-modal', {
 	template: '#login-register-modal-template',
 	props: {
@@ -14,6 +15,7 @@ Vue.component('login-register-modal', {
 		password: ''
 	},
 	methods: {
+		/*Pass email and password from modal to parent scope*/
 		loginUser: function() {
 			var data = {
 				email: this.email,
@@ -21,15 +23,17 @@ Vue.component('login-register-modal', {
 			}
 
 			this.$dispatch('passCredentials', data);
-			this.email = '';
+			this.password = '';
 		},
-		registerUser: function() {
+		/*Hide login/register modal and show register form modal*/
+		showRegisterUserModal: function() {
 			this.show = false;
-			this.$dispatch('showRegisterModal');
+			this.$dispatch('showRegisterUserModal');
 		}
 	}
 })
 
+/*Register form modal*/
 Vue.component('register-modal', {
 	template: '#register-modal-template',
 	props: {
@@ -48,30 +52,63 @@ Vue.component('register-modal', {
 		mobile: ''
 	},
 	methods: {
+		/*Pass registration data to parent scope*/
+		registerUser: function() {
+			var data = {
+				username: this.username,
+				email: this.email,
+				password: this.password,
+				confirmPassword: this.confirmPassword,
+				icno: this.icno,
+				mobile: this.mobile
+			}
 
+			this.show = false;
+			this.$dispatch('registerUser', data);
+		}
 	}
 })
 
 new Vue({
 	el: '#app',
 	data: {
-		showLoginRegisterModal: false,
-		showRegisterModal: false,
+		envSettings: {
+			environment: 'dev',
+			constInvalidUrl: 'Invalid url...',
+		},
+		url: {
+			checkUserRegStatusUrl: '',
+			userLoginUrl: '',
+			userRegistrationUrl: '',
+		},
+
 		userStatus: {
 			sessionExist: false,
 			isRegistered: false,
 			isFirstTimeUser: false
 		},
-		userCredential: {
-			email: ''
+		modal: {
+			showLoginRegisterModal: false,
+			showRegisterModal: false,
 		}
 	},
 	ready: function() {
+		this.initializeEnv();
 		this.checkUserRegistrationStatus();
 	},
 	methods: {
+		initializeEnv: function() {
+			if (this.envSettings.environment == 'dev') {
+				this.url.checkUserRegStatusUrl = 'http://localhost/totalmy/public/catchme/user/reg_status';
+				this.url.userLoginUrl = 'http://localhost/totalmy/public/catchme/user/login';
+				this.url.userRegistrationUrl = 'http://localhost/totalmy/public/catchme/user/register';
+				this.url.generateRandomInstantRewardUrl = 'http://localhost/totalmy/public/catchme/random_instant_reward';
+			} else {
+				this.url.checkUserRegStatusUrl = 'http://wearecrave.com/catchme/user/reg_status';
+			}
+		},
 		checkUserRegistrationStatus: function() {
-			this.$http.get('http://localhost/totalmy/public/catchme/user_reg_status').then(function(response) {
+			this.$http.get(this.url.checkUserRegStatusUrl).then(function(response) {
 				if (response.data.sessionExist) {
 					this.userStatus.sessionExist = true;
 
@@ -81,25 +118,67 @@ new Vue({
 						if (response.data.isFirstTimeUser) {
 							this.userStatus.isFirstTimeUser = true;
 						}
+					} else {
+						this.modal.showRegisterModal = true;	
 					}
 				} else {
-					this.showLoginRegisterModal = true;	
+					this.modal.showLoginRegisterModal = true;
 				}
-				this.showLoginRegisterModal = true;	
 
 				console.log(response.data.message);
 			}, function(response) {
-				console.log('Invalid url...');
+				console.log(this.constInvalidUrl);
 			});
+		},
+		userLogin: function(loginData) {
+			this.$http.post(this.url.userLoginUrl, loginData).then(function(response) {
+				this.checkUserRegistrationStatus();
+				console.log(response.data.message);
+			}, function(response) {
+				console.log(this.constInvalidUrl);
+			});
+		},
+		userRegister: function(regData) {
+			this.$http.post(this.url.userRegistrationUrl, regData).then(function(response) {
+				this.checkUserRegistrationStatus();
+				console.log(response.data.message);
+			}, function(response) {
+
+			});
+		},
+		clearSession: function() {
+			this.$http.get('http://localhost/totalmy/public/catchme/clearSession').then(function(response) {
+				console.log(response.data.message);
+			}, function(response) {
+				console.log(this.constInvalidUrl);
+			});
+		},
+		generateRandomInstantReward: function() {
+			this.$http.get()
 		}
 	},
 	events: {
 		'passCredentials': function(data) {
-			this.userCredential.email = data.email;
-			this.userCredential.password = data.password;
+			var loginData = {
+				'email': data.email,
+				'password': data.password
+			}
+
+			this.userLogin(loginData);
 		},
-		'showRegisterModal': function() {
-			this.showRegisterModal = true;
+		'registerUser': function(data) {
+			var regData = {
+				'username': data.username,
+				'email': data.email,
+				'password': data.password,
+				'icno': data.icno,
+				'mobile': data.mobile,
+			}
+
+			this.userRegister(regData);
+		},
+		'showRegisterUserModal': function() {
+			this.modal.showRegisterModal = true;
 		}
 	}
 })

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Participant;
@@ -20,18 +19,17 @@ class CampaignController extends Controller
         return view('indexV2');
     }
 
-
     public function checkUserRegStatus() {
         $email = Session::get('email');
 
         if ($email == null) {
-            /*if session existed*/
+            /*if session not existed*/
             return response()->json([
                 'message' => 'Session does not exist', 
                 'sessionExist' => false
             ]);
         } else {
-            /*if session not existed*/
+            /*if session existed*/
             $count = Participant::where('email', $email)
                 ->where('isRegistered', true)
                 ->count();
@@ -66,6 +64,79 @@ class CampaignController extends Controller
                 }
             }
         }
+    }
+
+    public function login(Request $request) {
+        /*Retrieve data pass from request*/
+        $email = $request->email;
+        $password = bcrypt($request->password);
+
+        /*Validate credentials*/
+        $count = Participant::where('email', $email)->where('password', $password)->count();
+
+        if ($count) {
+            /*If credential valid, set user session*/
+            Session::put('email', $request->email);
+            return response()->json(['message' => 'User is logged in']);
+        } else {
+            return response()->json(['message' => 'Invalid credential, please try again']);
+        }
+    }
+
+    public function register(Request $request) {
+        /*Retrieve data pass from request*/
+        $username = trim($request->username);
+        $email = trim($request->email);
+        $password = trim($request->password);
+        $icno = trim($request->icno);
+        $mobile = trim($request->mobile);
+
+        /*Determine whether email is unique*/
+        $count = Participant::where('email', $email)->count();
+
+        if ($count) {
+            /*User registered before with this email address*/
+            return response()->json(['message' => 'User existed, please try another email address']);
+        } else {
+            /*Determine whether user's identification number is unique*/
+            $count = Participant::where('icno', $icno)->count();
+
+            if ($count) {
+                /*Identification number is not unique*/
+                return response()->json(['message' => 'Your identification number already registered']);
+            } else {
+                /*Create participant if user checking is ok*/
+                Participant::create([
+                    'username' => $username, 
+                    'email' => $email, 
+                    'password' => bcrypt($password), 
+                    'icno' => $icno,
+                    'mobile' => $mobile,
+                    'isRegistered' => true
+                ]);
+
+                /*Set session for user*/
+                Session::put('email', $email);
+
+                return response()->json(['message' => 'User successfully register!']);
+            }
+        }
+    }
+
+    public function randomInstantReward() {
+        $totalInstantRewardCount = Prize::where('type', 'instant')->count();
+
+        $randNum = rand($totalInstantRewardCount);
+
+        $prize = Prize::find($randNum);
+
+        return response()->json(['message' => 'Your prize is ' . $prize->item]);
+    }
+
+    public function clearSession() {
+        Session::flush();
+
+        return response()->json(['message' => 'Session cleared']);
     }
 
     /*public function index() {
